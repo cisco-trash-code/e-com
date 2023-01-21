@@ -7,9 +7,11 @@ import com.cisco.orderservice.model.Order;
 import com.cisco.orderservice.model.OrderLineItems;
 import com.cisco.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +24,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final WebClient.Builder webClientBuilder;
+    @Autowired
+    private WebClient.Builder webClientBuilder;
     @Override
     public String placeOrder(OrderRequest orderRequest) {
 //        Order order = new Order();
@@ -68,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
 
             InventoryResponse[] inventoryResponsArray = webClientBuilder.build().get()
-                    .uri("http://inventory-service/api/inventory",
+                    .uri("http://localhost:8082/api/inventory/",
                             uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                     .retrieve()
                     .bodyToMono(InventoryResponse[].class)
